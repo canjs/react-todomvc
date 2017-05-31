@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "todomvc.js",
   "scripts": {
-    "build": "steal-tools build"
+    "eslint": "eslint \"**/*.js\" --ignore-pattern \"dist\" --ignore-pattern \"node_modules\"",
+    "build": "npm run eslint && steal-tools build"
   },
   "dependencies": {
     "can-component": "^3.0.7",
@@ -15,6 +16,9 @@
     "steal": "^1.5.2"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^3.18.0",
+    "eslint-plugin-react": "^7.0.1",
     "steal-tools": "^1.3.5"
   }
 }
