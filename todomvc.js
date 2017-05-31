@@ -1,11 +1,12 @@
 import "./styles.css";
 
 import React from "react";
+import ReactDOM from "react-dom";
 import route from "can-route";
 import DefineMap from "can-define/map/";
-import reactViewModel from "react-view-models";
-import Create from "./create";
-import List from "./list";
+import reactViewModel from "react-view-model";
+import Create from "./components/create";
+import List from "./components/list";
 import Todo from "./models/todo";
 
 const AppVM = DefineMap.extend('AppVM', {
@@ -31,7 +32,7 @@ const AppVM = DefineMap.extend('AppVM', {
 	}
 });
 
-const template = reactViewModel('App', AppVM, (props) => (
+const App = reactViewModel('App', AppVM, (props) => (
 	<section id="todoapp">
 		<header id="header">
 			<h1>todos</h1>
@@ -83,11 +84,13 @@ const template = reactViewModel('App', AppVM, (props) => (
 	</section>
 ));
 
-const appVM = new AppVM();
+var div = document.createElement('div');
+document.body.appendChild(div);
 
-route.data = appVM;
-route("{filter}");
-route.ready();
+ReactDOM.render(<App ref={register} />, div);
 
-const frag = template(appVM);
-document.body.appendChild(frag);
+function register(app) {
+	route.data = app.viewModel;
+	route("{filter}");
+	route.ready();
+}

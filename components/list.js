@@ -1,7 +1,7 @@
 import React from "react";
 import DefineMap from "can-define/map/";
-import { Component } from "react-view-models";
-import Todo from "./models/todo";
+import { Component } from "react-view-model";
+import Todo from "../models/todo";
 
 import canBatch from "can-event/batch/batch";
 
