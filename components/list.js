@@ -5,15 +5,45 @@ import Todo from "../models/todo";
 
 import canBatch from "can-event/batch/batch";
 
+export const ViewModel = DefineMap.extend("TodoListVM", {
+	todos: Todo.List,
+	editing: Todo,
+	backupName: "string",
+	isEditing(todo) {
+		return todo === this.editing;
+	},
+});
+
 export default class List extends Component {
+	edit(todo) {
+		canBatch.start();
+		this.backupName = todo.name;
+		this.editing = todo;
+		canBatch.stop();
+	}
+
+	cancelEdit() {
+		if (this.editing) {
+			this.editing.name = this.backupName;
+		}
+		this.editing = null;
+	}
+
+	updateName(e) {
+		e && e.preventDefault();
+
+		this.editing.save();
+		this.editing = null;
+	}
+
 	render() {
 		return (
 			<ul id="todo-list">
-				{ this.props.todos && this.props.todos.map((todo) => (
+				{ this.viewModel.todos && this.viewModel.todos.map((todo) => (
 					<li key={ todo.id } className={ [
 						"todo",
 						todo.complete && "completed",
-						this.props.isEditing(todo) && "editing",
+						this.viewModel.isEditing(todo) && "editing",
 					].filter(v => v).join(" ") }>
 						<div className="view">
 							<input
@@ -26,20 +56,20 @@ export default class List extends Component {
 								} }
 							/>
 							<label
-								onDoubleClick={ () => this.props.edit(todo) }
+								onDoubleClick={ () => this.viewModel.edit(todo) }
 							>{todo.name}</label>
 							<button
 								className="destroy"
 								onClick={ () => todo.destroy() }
 							></button>
 						</div>
-						<form onSubmit={ (e) => this.props.updateName(e) }>
+						<form onSubmit={ (e) => this.viewModel.updateName(e) }>
 							<input
 								className="edit"
 								type="text"
 								value={todo.name}
 								onChange={ (e) => todo.name = e.target.value }
-								onBlur={ () => this.props.cancelEdit() }
+								onBlur={ () => this.viewModel.cancelEdit() }
 							/>
 						</form>
 					</li>
@@ -49,29 +79,4 @@ export default class List extends Component {
 	}
 }
 
-List.ViewModel = DefineMap.extend("TodoListVM", {
-	todos: Todo.List,
-	editing: Todo,
-	backupName: "string",
-	isEditing(todo) {
-		return todo === this.editing;
-	},
-	edit(todo) {
-		canBatch.start();
-		this.backupName = todo.name;
-		this.editing = todo;
-		canBatch.stop();
-	},
-	cancelEdit() {
-		if (this.editing) {
-			this.editing.name = this.backupName;
-		}
-		this.editing = null;
-	},
-	updateName(e) {
-		e && e.preventDefault();
-
-		this.editing.save();
-		this.editing = null;
-	}
-});
+List.ViewModel = ViewModel;
