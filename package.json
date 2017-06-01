@@ -13,7 +13,7 @@
     "can-route": "^3.0.11",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-view-model": "^0.4.0",
+    "react-view-model": "^0.4.1",
     "steal": "^1.5.2",
     "steal-css": "^1.2.0"
   },
