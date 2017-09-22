@@ -1,6 +1,6 @@
 import React from "react";
 import DefineMap from "can-define/map/";
-import { Component } from "react-view-model";
+import Component from "react-view-model/component";
 import Todo from "../models/todo";
 
 import canBatch from "can-event/batch/batch";
@@ -73,7 +73,7 @@ export default class List extends Component {
 							/>
 						</form>
 					</li>
-				)).serialize() }
+				)) }
 			</ul>
 		);
 	}

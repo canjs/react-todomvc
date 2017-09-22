@@ -1,6 +1,6 @@
 import React from "react";
 import DefineMap from "can-define/map/";
-import { Component } from "react-view-model";
+import Component from "react-view-model/component";
 import Todo from "../models/todo";
 
 export const ViewModel = DefineMap.extend("TodoCreateVM", {

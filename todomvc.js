@@ -4,7 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import route from "can-route";
 import DefineMap from "can-define/map/";
-import { Component } from "react-view-model";
+import Component from "react-view-model/component";
 import Create from "./components/create";
 import List from "./components/list";
 import Todo from "./models/todo";
