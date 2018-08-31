@@ -1,15 +1,14 @@
 import DefineMap from "can-define/map/";
 import DefineList from "can-define/list/";
-import superMap from "can-connect/can/super-map/";
-import set from "can-set";
 import fixture from "can-fixture";
+import realtimeRestModel from "can-realtime-rest-model";
 
 const Todo = DefineMap.extend('Todo', {
 	id: "string",
 	name: "string",
 	complete: {
 		type: "boolean",
-		value: false
+		default: false
 	}
 });
 
@@ -42,27 +41,19 @@ Todo.List = DefineList.extend('TodoList', {
 	}
 });
 
-Todo.connection = superMap({
-	url: "/api/todos",
+Todo.connection = realtimeRestModel({
 	Map: Todo,
-	List: Todo.List,
-	name: "todo",
-	algebra: todoAlgebra
+    List: Todo.List,
+    url: "/api/todos/{id}",
 });
 
 export default Todo;
 
-var todoAlgebra = new set.Algebra(
-	set.props.boolean("complete"),
-	set.props.id("id"),
-	set.props.sort("sort")
-);
-
-var todoStore = fixture.store([
-  { name: "mow lawn", complete: false, id: 5 },
-  { name: "dishes", complete: true, id: 6 },
-  { name: "learn canjs", complete: false, id: 7 }
-], todoAlgebra);
-
-fixture("/api/todos", todoStore);
-fixture.delay = 1000;
+const todoStore = fixture.store([
+    { name: "mow lawn", complete: false, id: 5 },
+    { name: "dishes", complete: true, id: 6 },
+    { name: "learn canjs", complete: false, id: 7 }
+  ]);
+  
+  fixture("/api/todos/{id}", todoStore);
+  fixture.delay = 1000;

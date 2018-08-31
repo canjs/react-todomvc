@@ -1,31 +1,25 @@
 import React from "react";
-import DefineMap from "can-define/map/";
-import Component from "react-view-model/component";
 import Todo from "../models/todo";
+import { connect, ObserveObject } from "ylem";
 
-export const ViewModel = DefineMap.extend("TodoCreateVM", {
-	todo: { Value: Todo },
-});
-
-export default class Create extends Component {
-	createTodo(e) {
+class Store extends ObserveObject {
+    todo = new Todo({name: ""});
+    createTodo = e => {
 		e && e.preventDefault();
-
-		this.viewModel.todo.save().then(() => {
-			this.viewModel.todo = new Todo();
+		this.todo.save().then(() => {
+			this.todo = new Todo({name: ""});
 		});
-	}
-
-	render() {
-		return (
-			<form onSubmit={ (e) => this.createTodo(e) }>
-				<input id="new-todo"
-					placeholder="What needs to be done?"
-					value={this.viewModel.todo.name}
-				/>
-			</form>
-		);
-	}
+    }
 }
 
-Create.ViewModel = ViewModel;
+const Create = ({todo, createTodo}) => (
+    <form onSubmit={createTodo}>
+        <input id="new-todo"
+            placeholder="What needs to be done?"
+            onChange={(e) => {if(!todo.isSaving()) todo.name = e.target.value}}
+            value={todo.name}
+        />
+    </form>
+);
+
+export default connect(Store)(Create);
