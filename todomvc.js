@@ -42,7 +42,7 @@ const TodoMVC = ({todosList, allChecked}) => {
                 disabled={ todosList && todosList.saving.length }
             />
             <label htmlFor="toggle-all">Mark all as complete</label>
-        <List todos={ todosList } length={ todosList ? todosList.length : 0} />   
+        <List todos={ todosList ? [...todosList] : [] }  />   
         </section>
         <footer id="footer">
             <span id="todo-count">

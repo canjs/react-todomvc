@@ -56,4 +56,4 @@ const todoStore = fixture.store([
   ]);
   
   fixture("/api/todos/{id}", todoStore);
-  fixture.delay = 1000;
+  fixture.delay = 1;
