@@ -1,102 +1,100 @@
-import "./styles.css";
+import './styles.css';
 
-import React from "react";
-import ReactDOM from "react-dom";
-import route from "can-route";
-import DefineMap from "can-define/map/";
-import Component from "react-view-model/component";
-import Create from "./components/create";
-import List from "./components/list";
-import Todo from "./models/todo";
+import ReactDOM from 'react-dom';
+import React from 'react';
+import Todo from '../models/todo';
+import Create from './components/create';
+import List from './components/list';
+import {  connect, ObserveObject  } from 'ylem';
+import {  getAsync  } from 'ylem/property-decorators';
+import route from 'can-route';
 
-export const ViewModel = DefineMap.extend('AppVM', {
-	filter: "string",
-	get todosPromise() {
-		if(!this.filter) {
+class TodoMVCStore extends ObserveObject {
+	@getAsync
+	get todosList() {
+		if (!route.data.filter) {
 			return Todo.getList({});
 		}
-		else {
-			return Todo.getList({ complete: this.filter === "complete" });
+		else { 
+			return Todo.getList({ filter: { complete: route.data.filter === 'complete' } });
 		}
-	},
-	todosList: {
-		get: function(lastSetValue, resolve) {
-			this.todosPromise.then(resolve);
-		}
-	},
+	}
 	get allChecked() {
 		return this.todosList && this.todosList.allComplete;
-	},
+	}
 	set allChecked(newVal) {
 		this.todosList && this.todosList.updateCompleteTo(newVal);
 	}
-});
-
-export default class App extends Component {
-	render() {
-		return (
-			<section id="todoapp">
-				<header id="header">
-					<h1>todos</h1>
-					<Create />
-				</header>
-
-				<section id="main">
-					<input
-						id="toggle-all"
-						type="checkbox"
-						checked={ this.viewModel.allChecked ? true : false }
-						disabled={ this.viewModel.todosList && this.viewModel.todosList.saving.length }
-					/>
-					<label htmlFor="toggle-all">Mark all as complete</label>
-					<List todos={ this.viewModel.todosList } />
-				</section>
-
-				<footer id="footer">
-					<span id="todo-count">
-						<strong>{this.viewModel.todosList && this.viewModel.todosList.active.length}</strong> items left
-					</span>
-
-					<ul id="filters">
-						<li>
-							<a
-								href={route.url({ filter: undefined })}
-								className={ route.current({ filter: undefined }) ? "selected" : "" }
-								>All</a>
-						</li>
-						<li>
-							<a
-								href={route.url({ filter: "active" })}
-								className={ route.current({ filter: "active" }) ? "selected" : "" }
-								>Active</a>
-						</li>
-						<li>
-							<a
-								href={route.url({ filter: "complete" })}
-								className={ route.current({ filter: "complete" }) ? "selected" : "" }
-								>Completed</a>
-						</li>
-					</ul>
-
-					<button id="clear-completed"
-						onClick={ () => this.viewModel.todosList.destroyComplete() }>
-						Clear completed ({this.viewModel.todosList && this.viewModel.todosList.complete.length})
-					</button>
-				</footer>
-			</section>
-		);
-	}
 }
 
-App.ViewModel = ViewModel;
+const TodoMVC = ({ todosList, allChecked, appRoute }) => {
+	return (
+		<section id='todoapp'>
+			<header id='header'>
+				<h1>todos</h1>
+				<Create />
+			</header>
+			<section id='main'>
+				<input
+					id='toggle-all'
+					type='checkbox'
+					checked={allChecked ? true : false}
+					disabled={todosList && todosList.saving.length}
+				/>
+				<label htmlFor='toggle-all'>Mark all as complete</label>
+				<List todos={todosList}  />   
+			</section>
+			<footer id='footer'>
+				<span id='todo-count'>
+					<strong>{ todosList && todosList.active.length }</strong> items left
+				</span>
+				<ul id='filters'>
+					<li>
+						<a
+							onClick={() => appRoute.filter = ''}
+							className={appRoute.filter === '' ? 'selected' : ''}
+						>All
+						</a>
+					</li>
+					<li>
+						<a
+							onClick={() => appRoute.filter = 'active'}
+							className={appRoute.filter === 'active' ? 'selected' : ''}
+						>Active
+						</a>
+					</li>
+					<li>
+						<a
+							onClick={() => appRoute.filter = 'complete'}
+							className={appRoute.filter === 'complete' ? 'selected' : ''}
+						>Completed
+						</a>
+					</li>
+				</ul>
 
-var div = document.createElement('div');
+				<button 
+					id='clear-completed'
+					onClick={() => todosList.destroyComplete()}
+				>
+					Clear completed ({ todosList && todosList.complete.length })
+				</button>
+			</footer>
+		</section>
+	); 
+};
+
+const App = connect(TodoMVCStore)(TodoMVC);
+export default App;
+
+class RouteStore extends ObserveObject {
+	filter = '';
+}
+
+
+route.data = new RouteStore();
+route.start();
+
+const div = document.createElement('div');
 document.body.appendChild(div);
 
-ReactDOM.render(<App ref={register} />, div);
-
-function register(app) {
-	route.data = app.viewModel;
-	route("{filter}");
-	route.ready();
-}
+ReactDOM.render(<App appRoute={route.data} />, div);
