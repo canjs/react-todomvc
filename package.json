@@ -4,13 +4,11 @@
   "main": "todomvc.js",
   "scripts": {
     "develop": "done-serve --develop --static --port 8080",
-    "build": "npm run eslint && steal-tools build"
+    "build": "npm run eslint && steal-tools build",
+    "eslint": "eslint ."
   },
   "dependencies": {
-    "can-data-types": "^1.2.0",
-    "can-define": "^2.5.9",
     "can-fixture": "^3.0.0",
-    "can-query-logic": "^1.1.0",
     "can-realtime-rest-model": "^1.0.0",
     "can-route": "^4.3.12",
     "react": "^16.4.2",
@@ -19,7 +17,10 @@
     "ylem": "^2.1.0"
   },
   "devDependencies": {
+    "babel-eslint": "^9.0.0",
     "done-serve": "^2.3.0",
+    "eslint": "^5.5.0",
+    "eslint-plugin-react": "^7.11.1",
     "steal": "^2.1.2",
     "steal-tools": "^2.0.5"
   },
